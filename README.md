@@ -9,7 +9,7 @@ A **Next.js** app that forges stylized **1024×1024 profile cards** for avatars 
   - **Binding parameters** — Pick archetype, element, intensity, mood, optional visual style, frame, and optional X handle. A deterministic seed maps your choices to one of **147** ritual portraits (metadata in `data/images.ts`, files under `private-assets/ritual/`) and generates a ritual name + rarity.
   - **Realm generator** — Optional handle, pick one of eight **worlds** (ocean, volcanic, …). Each world reads **`.png` or `.webp`** rasters from `private-assets/ritual/<world>/` on the server (safe basenames, no public directory listing). A protected API returns **one** random file per forge; if a folder is empty, it falls back to the main portrait pool.
 - **Exports** — Download raw portrait PNG, full card PNG, tweak glitch/contrast on the result, optional post to X.
-- **On-chain mint (Ritual)** — Mint the generated card as ERC-721 (`RitualPFP`) from the forge result screen. Metadata + artwork are embedded as a data URI in `tokenURI` (no IPFS). Gas estimate is prefetched after the card render completes, before pressing Mint.
+- **On-chain mint (Ritual)** — Mint from the forge result screen as ERC-721 (`RitualPFP`). To keep fees low, mint uses compact on-chain metadata (data URI) with a lightweight SVG + card fingerprint, and prefetches gas estimate before pressing Mint.
 
 ## Tech stack
 
@@ -45,7 +45,8 @@ RITUAL_RPC_URL=https://rpc.ritualfoundation.org
 
 - `NEXT_PUBLIC_RITUAL_PFP_ADDRESS` is required to enable the mint panel.
 - `PRIVATE_KEY` + `RITUAL_RPC_URL` are used by the Hardhat deploy script.
-- Keep `.env.local` private and never commit real keys.
+- Never put `PRIVATE_KEY` in Vercel env vars, and never commit real keys.
+- Keep `.env.local` private (`.gitignore` already excludes it).
 
 ### Deploy contract
 
@@ -59,7 +60,7 @@ Copy the deployed address into `NEXT_PUBLIC_RITUAL_PFP_ADDRESS`, then restart th
 
 - Mint is free at contract level; users pay network gas in RITUAL.
 - The gas number is from RPC simulation of the real `mint(tokenURI)` call (not random).
-- Bigger on-chain image payloads usually cost more gas than tiny payloads.
+- Compact metadata mode is enabled by default to keep mint fees low.
 - Wallet-confirmed final fee can differ slightly from the estimate.
 
 ## Assets (in repo)
