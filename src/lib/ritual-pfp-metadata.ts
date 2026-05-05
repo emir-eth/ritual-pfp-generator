@@ -17,7 +17,7 @@ function shortCanvasFingerprint(canvas: HTMLCanvasElement): string {
 }
 
 function compactOnchainSvg(fingerprint: string): string {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='#090c12'/><stop offset='1' stop-color='#141a24'/></linearGradient></defs><rect width='512' height='512' fill='url(#g)'/><text x='256' y='228' text-anchor='middle' font-family='monospace' font-size='36' fill='#d4af37'>RITUAL PFP</text><text x='256' y='286' text-anchor='middle' font-family='monospace' font-size='20' fill='#8ca0bf'>${fingerprint}</text></svg>`;
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><rect width='256' height='256' fill='#10151f'/><text x='128' y='122' text-anchor='middle' font-family='monospace' font-size='18' fill='#d4af37'>RITUAL</text><text x='128' y='145' text-anchor='middle' font-family='monospace' font-size='10' fill='#8ca0bf'>${fingerprint}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
@@ -27,10 +27,8 @@ export async function buildDataUriTokenUriFromCardCanvas(canvas: HTMLCanvasEleme
   const imageDataUrl = compactOnchainSvg(fingerprint);
 
   const metadata = {
-    name: "Ritual PFP",
-    description: "Compact on-chain metadata minted from Ritual Forge.",
+    name: `Ritual #${fingerprint.slice(-4)}`,
     image: imageDataUrl,
-    attributes: [{ trait_type: "Card Fingerprint", value: fingerprint }],
   };
 
   const json = JSON.stringify(metadata);
