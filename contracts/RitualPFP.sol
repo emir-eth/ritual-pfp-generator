@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 contract RitualPFP is ERC721URIStorage {
     uint256 private _nextTokenId;
 
-    event Minted(address user, uint256 tokenId, string tokenURI);
+    event Minted(address indexed user, uint256 indexed tokenId);
 
     constructor() ERC721("Ritual PFP", "RPFP") {
         _nextTokenId = 1;
@@ -19,6 +19,6 @@ contract RitualPFP is ERC721URIStorage {
         tokenId = _nextTokenId++;
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, tokenURI);
-        emit Minted(msg.sender, tokenId, tokenURI);
+        emit Minted(msg.sender, tokenId);
     }
 }

@@ -11,9 +11,8 @@ export const ritualPfpAbi = [
     type: "event",
     name: "Minted",
     inputs: [
-      { name: "user", type: "address", indexed: false },
-      { name: "tokenId", type: "uint256", indexed: false },
-      { name: "tokenURI", type: "string", indexed: false },
+      { name: "user", type: "address", indexed: true },
+      { name: "tokenId", type: "uint256", indexed: true },
     ],
   },
 ] as const;

@@ -15,7 +15,28 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 
 /** Builds `data:application/json;base64,...` tokenURI from the forged card canvas (current pixels). */
 export async function buildDataUriTokenUriFromCardCanvas(canvas: HTMLCanvasElement): Promise<string> {
-  const blob = await canvasToPngBlob(canvas);
+  // Shrink + JPEG-compress before embedding to keep calldata/storage costs manageable.
+  const downscaled = document.createElement("canvas");
+  const target = Math.min(512, Math.max(256, Math.min(canvas.width || 1024, canvas.height || 1024)));
+  downscaled.width = target;
+  downscaled.height = target;
+  const ctx = downscaled.getContext("2d");
+  if (!ctx) throw new Error("Could not prepare metadata image canvas");
+  ctx.drawImage(canvas, 0, 0, target, target);
+
+  let blob: Blob;
+  try {
+    blob = await new Promise<Blob>((resolve, reject) => {
+      downscaled.toBlob(
+        (b) => (b ? resolve(b) : reject(new Error("Could not export compressed image blob"))),
+        "image/jpeg",
+        0.78,
+      );
+    });
+  } catch {
+    // Fallback to PNG if the browser fails JPEG export.
+    blob = await canvasToPngBlob(downscaled);
+  }
   const imageDataUrl = await blobToDataUrl(blob);
 
   const metadata = {
