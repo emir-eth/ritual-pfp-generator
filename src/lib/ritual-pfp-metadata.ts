@@ -1,48 +1,36 @@
-import { canvasToPngBlob } from "@/lib/ritual-canvas";
+function shortCanvasFingerprint(canvas: HTMLCanvasElement): string {
+  const size = 16;
+  const probe = document.createElement("canvas");
+  probe.width = size;
+  probe.height = size;
+  const ctx = probe.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return "unknown";
+  ctx.drawImage(canvas, 0, 0, size, size);
+  const { data } = ctx.getImageData(0, 0, size, size);
+  let h = 5381;
+  for (let i = 0; i < data.length; i += 13) {
+    h = ((h << 5) + h) ^ data[i];
+    h = ((h << 5) + h) ^ data[i + 1];
+    h = ((h << 5) + h) ^ data[i + 2];
+  }
+  return `0x${(h >>> 0).toString(16).padStart(8, "0")}`;
+}
 
-function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const r = reader.result;
-      if (typeof r === "string") resolve(r);
-      else reject(new Error("readAsDataURL failed"));
-    };
-    reader.onerror = () => reject(reader.error ?? new Error("FileReader error"));
-    reader.readAsDataURL(blob);
-  });
+function compactOnchainSvg(fingerprint: string): string {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop stop-color='#090c12'/><stop offset='1' stop-color='#141a24'/></linearGradient></defs><rect width='512' height='512' fill='url(#g)'/><text x='256' y='228' text-anchor='middle' font-family='monospace' font-size='36' fill='#d4af37'>RITUAL PFP</text><text x='256' y='286' text-anchor='middle' font-family='monospace' font-size='20' fill='#8ca0bf'>${fingerprint}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
 /** Builds `data:application/json;base64,...` tokenURI from the forged card canvas (current pixels). */
 export async function buildDataUriTokenUriFromCardCanvas(canvas: HTMLCanvasElement): Promise<string> {
-  // Shrink + JPEG-compress before embedding to keep calldata/storage costs manageable.
-  const downscaled = document.createElement("canvas");
-  const target = Math.min(512, Math.max(256, Math.min(canvas.width || 1024, canvas.height || 1024)));
-  downscaled.width = target;
-  downscaled.height = target;
-  const ctx = downscaled.getContext("2d");
-  if (!ctx) throw new Error("Could not prepare metadata image canvas");
-  ctx.drawImage(canvas, 0, 0, target, target);
-
-  let blob: Blob;
-  try {
-    blob = await new Promise<Blob>((resolve, reject) => {
-      downscaled.toBlob(
-        (b) => (b ? resolve(b) : reject(new Error("Could not export compressed image blob"))),
-        "image/jpeg",
-        0.78,
-      );
-    });
-  } catch {
-    // Fallback to PNG if the browser fails JPEG export.
-    blob = await canvasToPngBlob(downscaled);
-  }
-  const imageDataUrl = await blobToDataUrl(blob);
+  const fingerprint = shortCanvasFingerprint(canvas);
+  const imageDataUrl = compactOnchainSvg(fingerprint);
 
   const metadata = {
     name: "Ritual PFP",
-    description: "Generated on Ritual PFP System",
+    description: "Compact on-chain metadata minted from Ritual Forge.",
     image: imageDataUrl,
+    attributes: [{ trait_type: "Card Fingerprint", value: fingerprint }],
   };
 
   const json = JSON.stringify(metadata);

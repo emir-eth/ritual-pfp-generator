@@ -86,7 +86,7 @@ export function MintGasEstimateCard({ pending, estimateFailed, feeWei, gasLimit,
 
           {footnote ? <p className="mt-2 text-[11px] leading-relaxed text-slate-500">{footnote}</p> : null}
           <p className="mt-2 border-t border-white/[0.06] pt-2 text-[10px] leading-relaxed text-slate-600">
-            Bigger on-chain images mean more data in the transaction, so gas tends to run higher than a short text mint.
+            Compact metadata mode is enabled to keep mint gas lower and more predictable.
           </p>
         </div>
       </div>

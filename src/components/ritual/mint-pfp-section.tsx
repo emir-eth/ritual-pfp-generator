@@ -297,7 +297,7 @@ export function MintPfpSection({
       <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-accent/88">On-chain mint</p>
       <p className="mt-2 text-sm leading-relaxed text-muted">
         Mint this forged card as an ERC-721 on Ritual. <strong className="text-foreground/90">Mint is Free</strong> —
-        you only pay network gas in RITUAL. Metadata is embedded as a data URI in the token (no IPFS).
+        you only pay network gas in RITUAL. Token metadata is stored on-chain in a compact data URI (no IPFS).
       </p>
 
       {!isConnected ? (
@@ -369,7 +369,7 @@ export function MintPfpSection({
             </a>
           ) : null}
           <p className="text-[11px] leading-relaxed text-muted">
-            The preview above matches the artwork stored in your token URI (on-chain data).
+            This mint stores compact on-chain metadata plus a fingerprint to keep gas much lower.
           </p>
         </div>
       ) : null}
