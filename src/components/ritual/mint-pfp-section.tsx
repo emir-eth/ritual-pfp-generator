@@ -271,20 +271,10 @@ export function MintPfpSection({
     return (
       <div className="space-y-3 rounded-sm border border-white/[0.08] bg-black/30 p-4 text-left text-sm text-muted">
         <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-accent/90">
-          On-chain mint is not configured
+          Mint temporarily unavailable
         </p>
         <p className="text-[13px] leading-relaxed text-foreground/88">
-          Add the deployed contract line to <code className="font-mono text-[11px] text-foreground/95">.env.local</code>{" "}
-          at the project root:{" "}
-          <code className="rounded bg-white/[0.07] px-1 py-0.5 font-mono text-[11px] text-foreground/95">
-            NEXT_PUBLIC_RITUAL_PFP_ADDRESS=0x…
-          </code>{" "}
-          (from <code className="rounded bg-white/[0.07] px-1 font-mono text-[11px]">npm run deploy:pfp</code> output),
-          then save and restart so the new variable loads.
-        </p>
-        <p className="text-[12px] leading-relaxed text-muted">
-          Deploy uses <code className="font-mono text-[11px] text-foreground/80">PRIVATE_KEY</code> in{" "}
-          <code className="font-mono text-[11px]">.env.local</code> with RITUAL for gas on Ritual.
+          On-chain mint is not configured for this deployment. Please try again later.
         </p>
       </div>
     );

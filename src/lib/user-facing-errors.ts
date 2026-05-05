@@ -48,7 +48,7 @@ export function mintErrorMessageForUser(err: unknown): string {
     return "The token payload may be hitting network limits. Try again with a smaller card or simpler artwork.";
   }
   if (blob.includes("reverted") || blob.includes("execution reverted") || blob.includes("transaction failed")) {
-    return "The transaction reverted on-chain. Try again in a moment; if it keeps failing, check the explorer or your RPC. Mint is Free — you only pay gas.";
+    return "The transaction did not complete on-chain. Try again in a moment.";
   }
   if (blob.includes("gas") && (blob.includes("limit") || blob.includes("too low"))) {
     return "Gas limit was too low. Try again and let your wallet re-estimate, or refresh the page.";
@@ -60,10 +60,10 @@ export function mintErrorMessageForUser(err: unknown): string {
     return "Wallet may be out of sync. Open your wallet, wait a moment, then try minting again.";
   }
   if (blob.includes("internal json-rpc") || blob.includes("rpc error")) {
-    return "Could not reach the RPC. Check your connection and try again.";
+    return "Network is temporarily unavailable. Please try again.";
   }
 
-  return "Mint could not finish. Try again shortly; if it keeps failing, check the transaction on the explorer.";
+  return "Mint could not finish. Please try again shortly.";
 }
 
 export function cardExportErrorMessageForUser(err: unknown): string {
